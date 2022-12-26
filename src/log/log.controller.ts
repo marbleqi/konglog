@@ -7,7 +7,7 @@ import { EntityManager } from 'typeorm';
 // 内部依赖
 import { KongLogEntity } from './log.entity';
 
-@Controller('log')
+@Controller()
 export class LogController {
   /**
    * 构造函数
@@ -24,7 +24,7 @@ export class LogController {
    * @param value 提交的站点信息
    * @param res 响应上下文
    */
-  @Post()
+  @Post('*')
   async create(@Body() value: any, @Res() res: Response): Promise<void> {
     console.debug('收到消息', value);
     this.eventEmitter.emit('kong_log', value);
@@ -39,11 +39,11 @@ export class LogController {
   async addLog(value: any) {
     await this.entityManager.insert(KongLogEntity, {
       log: value,
-      client_ip: value.client_ip ? value.client_ip : '',
-      request: value.request ? value.request : {},
-      response: value.response ? value.response : {},
-      route: value.route ? value.route : {},
-      service: value.service ? value.service : {},
+      routeId: value?.route?.id ? value.route.id : '',
+      serviceId: value?.service?.id ? value.service.id : '',
+      client_ip: value?.client_ip ? value.client_ip : '',
+      request: value?.request ? value.request : {},
+      response: value?.response ? value.response : {},
       createAt: Date.now(),
     });
   }

@@ -29,7 +29,6 @@ import { LogModule } from './log/log.module';
           throw new Error('未配置数据库密码');
         }
         const password = process.env.POSTGRES_PSW;
-        console.debug('当前环境', process.env.NODE_ENV);
         /**同步配置，当开发环境和演示环境时，自动同步表结构 */
         return {
           type: 'postgres',

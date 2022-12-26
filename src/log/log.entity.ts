@@ -12,6 +12,14 @@ export class KongLogEntity {
   @Column({ type: 'jsonb', name: 'log', comment: '日志信息' })
   log: any;
 
+  /**路由 */
+  @Column({ type: 'text', name: 'route_id', comment: '路由' })
+  routeId: any;
+
+  /**服务 */
+  @Column({ type: 'text', name: 'service_id', comment: '服务' })
+  serviceId: any;
+
   /**客户端IP */
   @Column({ type: 'text', name: 'client_ip', comment: '客户端IP' })
   client_ip: string;
@@ -23,14 +31,6 @@ export class KongLogEntity {
   /**响应 */
   @Column({ type: 'jsonb', name: 'response', comment: '响应' })
   response: any;
-
-  /**路由 */
-  @Column({ type: 'jsonb', name: 'route', comment: '路由' })
-  route: any;
-
-  /**服务 */
-  @Column({ type: 'jsonb', name: 'service', comment: '服务' })
-  service: any;
 
   /**创建时间 */
   @Column({ type: 'bigint', name: 'create_at', comment: '创建时间' })

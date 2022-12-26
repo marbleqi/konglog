@@ -10,6 +10,6 @@ async function bootstrap() {
   // 开启全局跨域许可
   app.enableCors({ origin: true });
   // 开启服务监听
-  await app.listen(parseInt(process.env.PORT, 10) || 80);
+  await app.listen(80);
 }
 bootstrap();
