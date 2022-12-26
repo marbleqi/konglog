@@ -7,7 +7,7 @@ RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && yum install -y ep
 WORKDIR /data
 
 # 设置nodejs版本为16
-RUN curl --silent --location https://rpm.nodesource.com/setup_18.x | bash - \
+RUN curl --silent --location https://rpm.nodesource.com/setup_16.x | bash - \
   # 安装nodejs
   && yum install -y nodejs python3 make gcc gcc-c++ \
   # 升级npm包
