@@ -1,8 +1,16 @@
 // 外部依赖
-import { Entity, Column, PrimaryGeneratedColumn, AfterLoad } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  PrimaryColumn,
+  Column,
+  Index,
+  AfterLoad,
+} from 'typeorm';
 
 /**KONG日志表 */
 @Entity('kong_logs')
+@Index(['routeId', 'started_at'])
 export class KongLogEntity {
   /**日志ID */
   @PrimaryGeneratedColumn({ type: 'bigint', name: 'log_id', comment: '日志ID' })
@@ -15,10 +23,6 @@ export class KongLogEntity {
   /**路由 */
   @Column({ type: 'text', name: 'route_id', comment: '路由' })
   routeId: any;
-
-  /**服务 */
-  @Column({ type: 'text', name: 'service_id', comment: '服务' })
-  serviceId: any;
 
   /**客户端IP */
   @Column({ type: 'text', name: 'client_ip', comment: '客户端IP' })
@@ -33,13 +37,49 @@ export class KongLogEntity {
   response: any;
 
   /**创建时间 */
-  @Column({ type: 'bigint', name: 'create_at', comment: '创建时间' })
-  createAt: number;
+  @Column({ type: 'bigint', name: 'started_at', comment: '创建时间' })
+  started_at: number;
 
   /**对长整型数据返回时，进行数据转换 */
   @AfterLoad()
   userLoad() {
     this.logId = Number(this.logId);
-    this.createAt = Number(this.createAt);
+    this.started_at = Number(this.started_at);
   }
+}
+
+/**KONG日志统计表 */
+@Entity('kong_logs_count')
+export class KongLogCountEntity {
+  /**路由 */
+  @PrimaryColumn({ type: 'text', name: 'route_id', comment: '路由' })
+  routeId: string;
+
+  /**年 */
+  @PrimaryColumn({ type: 'int', name: 'year', comment: '年' })
+  year: number;
+
+  /**月 */
+  @PrimaryColumn({ type: 'int', name: 'month', comment: '月' })
+  month: number;
+
+  /**日 */
+  @PrimaryColumn({ type: 'int', name: 'day', comment: '日' })
+  day: number;
+
+  /**时 */
+  @PrimaryColumn({ type: 'int', name: 'hour', comment: '时' })
+  hour: number;
+
+  /**分 */
+  @PrimaryColumn({ type: 'int', name: 'minute', comment: '分' })
+  minute: number;
+
+  /**秒 */
+  @PrimaryColumn({ type: 'int', name: 'second', comment: '秒' })
+  second: number;
+
+  /**请求数 */
+  @Column({ type: 'int', name: 'count', comment: '请求数' })
+  count: number;
 }

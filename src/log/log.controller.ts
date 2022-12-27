@@ -4,8 +4,17 @@ import { Response } from 'express';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
+import {
+  getYear,
+  getMonth,
+  getDaysInMonth,
+  getHours,
+  getMinutes,
+  getSeconds,
+} from 'date-fns';
+
 // 内部依赖
-import { KongLogEntity } from './log.entity';
+import { KongLogEntity, KongLogCountEntity } from './log.entity';
 
 @Controller()
 export class LogController {
@@ -26,7 +35,6 @@ export class LogController {
    */
   @Post('*')
   async create(@Body() value: any, @Res() res: Response): Promise<void> {
-    console.debug('收到消息', value);
     this.eventEmitter.emit('kong_log', value);
     res.status(200).json({ code: 0 });
   }
@@ -37,14 +45,57 @@ export class LogController {
    */
   @OnEvent('kong_log')
   async addLog(value: any) {
+    const log = value;
+    const routeId = value?.route?.id ? value.route.id : '';
+    const client_ip = value?.client_ip ? value.client_ip : '';
+    const request = value?.request ? value.request : {};
+    const response = value?.response ? value.response : {};
+    const started_at = value?.started_at ? value?.started_at : 0;
     await this.entityManager.insert(KongLogEntity, {
-      log: value,
-      routeId: value?.route?.id ? value.route.id : '',
-      serviceId: value?.service?.id ? value.service.id : '',
-      client_ip: value?.client_ip ? value.client_ip : '',
-      request: value?.request ? value.request : {},
-      response: value?.response ? value.response : {},
-      createAt: Date.now(),
+      log,
+      routeId,
+      client_ip,
+      request,
+      response,
+      started_at,
     });
+    const year = getYear(started_at);
+    const month = getMonth(started_at);
+    const day = getDaysInMonth(started_at);
+    const hour = getHours(started_at);
+    const minute = getMinutes(started_at);
+    const second = getSeconds(started_at);
+    /**用户对象 */
+    const count: KongLogCountEntity = await this.entityManager.findOneBy(
+      KongLogCountEntity,
+      { year, month, day, hour, minute, second, routeId },
+    );
+    if (count) {
+      await this.entityManager.increment(
+        KongLogCountEntity,
+        {
+          year,
+          month,
+          day,
+          hour,
+          minute,
+          second,
+          routeId,
+        },
+        'count',
+        1,
+      );
+    } else {
+      await this.entityManager.insert(KongLogCountEntity, {
+        year,
+        month,
+        day,
+        hour,
+        minute,
+        second,
+        routeId,
+        count: 1,
+      });
+    }
   }
 }
