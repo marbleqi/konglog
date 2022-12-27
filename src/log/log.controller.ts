@@ -7,7 +7,7 @@ import { EntityManager } from 'typeorm';
 import {
   getYear,
   getMonth,
-  getDaysInMonth,
+  getDate,
   getHours,
   getMinutes,
   getSeconds,
@@ -60,8 +60,8 @@ export class LogController {
       started_at,
     });
     const year = getYear(started_at);
-    const month = getMonth(started_at);
-    const day = getDaysInMonth(started_at);
+    const month = getMonth(started_at) + 1;
+    const day = getDate(started_at);
     const hour = getHours(started_at);
     const minute = getMinutes(started_at);
     const second = getSeconds(started_at);
