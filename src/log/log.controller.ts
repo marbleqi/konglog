@@ -4,14 +4,7 @@ import { Response } from 'express';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
-import {
-  getYear,
-  getMonth,
-  getDate,
-  getHours,
-  getMinutes,
-  getSeconds,
-} from 'date-fns';
+import { format } from 'date-fns';
 
 // 内部依赖
 import { KongLogEntity, KongLogCountEntity } from './log.entity';
@@ -59,41 +52,36 @@ export class LogController {
       response,
       started_at,
     });
-    const year = getYear(started_at);
-    const month = getMonth(started_at) + 1;
-    const day = getDate(started_at);
-    const hour = getHours(started_at);
-    const minute = getMinutes(started_at);
-    const second = getSeconds(started_at);
+    const year = format(started_at, 'yyyy');
+    const month = format(started_at, 'yyyy-MM');
+    const day = format(started_at, 'yyyy-MM-dd');
+    const hour = format(started_at, 'yyyy-MM-dd HH');
+    const minute = format(started_at, 'yyyy-MM-dd HH:mm');
+    const second = format(started_at, 'yyyy-MM-dd HH:mm:ss');
     /**用户对象 */
     const count: KongLogCountEntity = await this.entityManager.findOneBy(
       KongLogCountEntity,
-      { year, month, day, hour, minute, second, routeId },
+      { routeId, second },
     );
     if (count) {
       await this.entityManager.increment(
         KongLogCountEntity,
         {
-          year,
-          month,
-          day,
-          hour,
-          minute,
-          second,
           routeId,
+          second,
         },
         'count',
         1,
       );
     } else {
       await this.entityManager.insert(KongLogCountEntity, {
+        routeId,
+        second,
         year,
         month,
         day,
         hour,
         minute,
-        second,
-        routeId,
         count: 1,
       });
     }

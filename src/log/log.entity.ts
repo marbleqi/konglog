@@ -50,34 +50,35 @@ export class KongLogEntity {
 
 /**KONG日志统计表 */
 @Entity('kong_logs_count')
+@Index(['routeId', 'year', 'month', 'day', 'hour', 'minute'])
 export class KongLogCountEntity {
   /**路由 */
   @PrimaryColumn({ type: 'text', name: 'route_id', comment: '路由' })
   routeId: string;
 
+  /**秒 */
+  @PrimaryColumn({ type: 'text', name: 'second', comment: '秒' })
+  second: string;
+
   /**年 */
-  @PrimaryColumn({ type: 'int', name: 'year', comment: '年' })
-  year: number;
+  @Column({ type: 'text', name: 'year', comment: '年' })
+  year: string;
 
   /**月 */
-  @PrimaryColumn({ type: 'int', name: 'month', comment: '月' })
-  month: number;
+  @Column({ type: 'text', name: 'month', comment: '月' })
+  month: string;
 
   /**日 */
-  @PrimaryColumn({ type: 'int', name: 'day', comment: '日' })
-  day: number;
+  @Column({ type: 'text', name: 'day', comment: '日' })
+  day: string;
 
   /**时 */
-  @PrimaryColumn({ type: 'int', name: 'hour', comment: '时' })
-  hour: number;
+  @Column({ type: 'text', name: 'hour', comment: '时' })
+  hour: string;
 
   /**分 */
-  @PrimaryColumn({ type: 'int', name: 'minute', comment: '分' })
-  minute: number;
-
-  /**秒 */
-  @PrimaryColumn({ type: 'int', name: 'second', comment: '秒' })
-  second: number;
+  @Column({ type: 'text', name: 'minute', comment: '分' })
+  minute: string;
 
   /**请求数 */
   @Column({ type: 'int', name: 'count', comment: '请求数' })
